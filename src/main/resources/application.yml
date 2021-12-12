@@ -10,6 +10,12 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${KEYCLOAK_HOST}/auth/realms/SmartOrder
+          jwk-set-uri: http://${KEYCLOAK_HOST}/auth/realms/SmartOrder/protocol/openid-connect/certs
 springdoc:
   swagger-ui:
     displayRequestDuration: true
@@ -17,3 +23,10 @@ springdoc:
       enabled: true
     operationsSorter: method #For sorting endpoints by http methods
     tagsSorter: alpha #For sorting tags alphabetically
+    oauth:
+      client-id: ${OAUTH_CLIENT_ID}
+      client-secret: ${OAUTH_CLIENT_SECRET}
+      use-pkce-with-authorization-code-grant: true
+  oAuthFlow:
+    authorizationUrl: http://${KEYCLOAK_HOST}/auth/realms/SmartOrder/protocol/openid-connect/auth
+    tokenUrl: http://${KEYCLOAK_HOST}/auth/realms/SmartOrder/protocol/openid-connect/token

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.mapstruct.factory.Mappers;
 import org.springdoc.api.annotations.ParameterObject;
@@ -19,13 +20,18 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.fayden.smartorder.config.OpenApi3Config.SECURITY_AUTH_SCHEME_NAME;
+
 @RestController
-@RequestMapping("order")
+@RequestMapping("orders")
 @Tag(name = "Order")
+@SecurityRequirement(name = SECURITY_AUTH_SCHEME_NAME)
 public class OrderResource {
 
     private final OrderService orderService;
@@ -41,6 +47,7 @@ public class OrderResource {
     @Operation(summary = "Retrieve a list of Order", description = "Retrieve a list of Order")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public SimplePage<OrderDTO> findAll(@ParameterObject @PageableDefault(size = 20, sort = "id") Pageable pageable) {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return SimplePage.of(orderService.findAll(pageable).map(orderMapper::toDTO));
     }
 
